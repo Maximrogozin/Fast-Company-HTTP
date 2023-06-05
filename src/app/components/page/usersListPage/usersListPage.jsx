@@ -6,16 +6,15 @@ import GroupList from "../../common/groupList";
 import SearchStatus from "../../ui/searchStatus";
 import UserTable from "../../ui/usersTable";
 import _ from "lodash";
-import { useUser } from "../../../hooks/useUsers";
-import { useAuth } from "../../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import {
     getProfessions,
     getProfessionsLoadStatus
 } from "../../../store/professions";
+import { getCurrentUserId, getUsersList } from "../../../store/users";
 
 const UsersListPage = () => {
-    const { currentUser } = useAuth();
+    const currentUserId = useSelector(getCurrentUserId());
     const profession = useSelector(getProfessions());
     const professionsLoading = useSelector(getProfessionsLoadStatus());
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,9 +23,10 @@ const UsersListPage = () => {
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const pageSize = 8;
 
-    const { users, setUsers } = useUser();
+    const users = useSelector(getUsersList());
     const handleDelete = (userId) => {
-        setUsers(users.filter((user) => user._id !== userId));
+        // setUsers(users.filter((user) => user._id !== userId));
+        console.log(userId);
     };
     const handleToggleBookMark = (id) => {
         const newArray = users.map((user) => {
@@ -35,7 +35,7 @@ const UsersListPage = () => {
             }
             return user;
         });
-        setUsers(newArray);
+        // setUsers(newArray);
         console.log(newArray);
     };
 
@@ -75,7 +75,7 @@ const UsersListPage = () => {
                           JSON.stringify(selectedProf)
                   )
                 : data;
-            return filteredUsers.filter((u) => u._id !== currentUser._id);
+            return filteredUsers.filter((u) => u._id !== currentUserId);
         }
         const filteredUsers = filterUsers(users);
         const count = filteredUsers.length;
